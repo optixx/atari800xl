@@ -1,5 +1,5 @@
 
-    *=$6000
+    *=$8000
 
     LDA     #<DL
     STA     560
@@ -7,30 +7,30 @@
     STA     561
     LDA     #<DLI
     STA     512
-    LDA     #>DLI 
+    LDA     #>DLI
     STA     513
     LDA     #192
-    STA     54286 
+    STA     54286
 
     LDA     #$B0
     STA     756
 
     LDY     #0
-RU1 
+RU1
     LDA     ZS1, Y
-    STA     $B0 * 256 + 8, Y 
+    STA     $B0 * 256 + 8, Y
     INY
     CPY     #24
-    BNE     RU1 
+    BNE     RU1
 
     LDY     #0
 RU2
     LDA     TEXT, Y
-    STA     TEXT + 40, Y 
-    STA     TEXT + 80, Y 
-    STA     TEXT + 120, Y 
-    STA     TEXT + 160, Y 
-    INY 
+    STA     TEXT + 40, Y
+    STA     TEXT + 80, Y
+    STA     TEXT + 120, Y
+    STA     TEXT + 160, Y
+    INY
     CPY     #40
     BNE     RU2
 
@@ -41,10 +41,10 @@ LOOP
 DL
     .BYTE   112, 112, 240, 196
     .WORD   TEXT
-    .BYTE   132, 132, 132, 132, 132, 132, 132, 65
+    .BYTE   132, 132, 132, 132, 65
     .WORD   DL
 
-DLI 
+DLI
     PHA
     TYA
     PHA
@@ -59,7 +59,7 @@ RU3
     STA     53272
     LDA     TAB4, Y
     STA     53273
-    
+
     STA     54282
     INY
     CPY     #8
@@ -67,8 +67,8 @@ RU3
 
     PLA
     TAY
-    PLA 
-    RTI 
+    PLA
+    RTI
 
 TAB1
     .BYTE   48, 50, 52, 54, 56, 58, 60, 62
@@ -79,13 +79,13 @@ TAB3
 TAB4
     .BYTE   240, 242, 244, 246, 248, 250, 252, 254
 
-ZS1 
+ZS1
     .BYTE   85, 85, 85, 85, 85, 85, 85, 85
     .BYTE   170, 170, 170, 170, 170, 170, 170, 170
-    .BYTE   255, 255, 255, 255, 255, 255, 255, 255  
-    
-TEXT    
+    .BYTE   255, 255, 255, 255, 255, 255, 255, 255
+
+TEXT
     .SBYTE  "!!!!!!!!########!!!!!!!!########"
 
 
-    
+

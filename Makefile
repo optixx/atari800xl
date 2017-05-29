@@ -1,9 +1,9 @@
 run: compile
-	../../bin/run.sh dli2.65o
+	../../bin/run.sh dli3.65o
 
 
 compile:
-	../../bin/atasm dli2.asm -xtest.atr
+	../../bin/atasm dli3.asm -xtest.atr
 
 
 all: run
