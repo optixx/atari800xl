@@ -1,9 +1,9 @@
 run: compile
-	../../bin/run.sh dli3.65o
+	../../bin/run.sh weganoid.65o
 
 
 compile:
-	../../bin/atasm dli3.asm -xtest.atr
+	../../bin/atasm weganoid.asm -xtest.atr
 
 
 all: run
