@@ -1,5 +1,5 @@
 
-    *=$4000
+    *$a800
 ; Clear player data
 
     LDY     #0
@@ -37,28 +37,14 @@ TU2
     STA     54286
 
 
-; Enable player
-    LDY    #204
 MAIN
     LDA     #3
     STA     53277       ; GRACTL
-    ;INY
-    TYA  
+    LDA     #176 
     STA     54279       ; PMBASE
     LDA     #62
     STA     559        ; SDMCTL
-    LDX     #0
-WAIT
-    INX
-WAIT2
-    LDA     54283
-    CMP     #155
-    BNE     WAIT2
-    CPX     #100
-    BNE     WAIT
-    JMP     MAIN
     RTS
-
 
 DLI1
     PHA

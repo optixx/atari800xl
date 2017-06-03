@@ -1,5 +1,5 @@
 
-    *=$9800
+    *=$a800
 ; Clear player data
 
 
