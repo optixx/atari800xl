@@ -1,110 +1,110 @@
 
     *=$a800
-; Clear player data
+; clear player data
 
 
-; Set DLI
-    LDA     #<DL
-    STA     560
-    LDA     #>DL
-    STA     561
-    LDA     #<DLI
-    STA     512
-    LDA     #>DLI
-    STA     513
-    LDA     #192
-    STA     54286
+; set dli
+    lda     #<dl
+    sta     560
+    lda     #>dl
+    sta     561
+    lda     #<dli
+    sta     512
+    lda     #>dli
+    sta     513
+    lda     #192
+    sta     54286
 
     
-    LDY     #<VBI
-    LDX     #>VBI
-    LDA     #6
-    JSR     58460
+    ldy     #<vbi
+    ldx     #>vbi
+    lda     #6
+    jsr     58460
 
-    LDA     #$B0
-    STA     54279 
-    LDA     #1
-    STA     53256
-    LDA     #62
-    STA     559
-    LDa     #3
-    STA     53277 
+    lda     #$b0
+    sta     54279 
+    lda     #1
+    sta     53256
+    lda     #62
+    sta     559
+    lda     #3
+    sta     53277 
 
-IKL 
-    LDX     #0
-IKL2
-    INC     COLO, X
-    INX 
-    CPX     #2
-    BEQ     IKL
-    LDA     #1
-    STA     540
-GHQ
-    LDA     540
-    CMP     #0
-    BNE     GHQ 
-    JMP     IKL2
-
-
-DL
-    .BYTE   112, 112, 112, 240, 112, 122
-    .BYTE   112, 112, 112, 65
-    .WORD   DL
+ikl 
+    ldx     #0
+ikl2
+    inc     colo, x
+    inx 
+    cpx     #2
+    beq     ikl
+    lda     #1
+    sta     540
+ghq
+    lda     540
+    cmp     #0
+    bne     ghq 
+    jmp     ikl2
 
 
-DLI
-    PHA
-POS1
-    LDA     #100
-    STA     53248
-PPOO1
-    LDA     #0
-    STA     53266
-    STA     54282 
-    PLA 
-    RTI 
+dl
+    .byte   112, 112, 112, 240, 112, 122
+    .byte   112, 112, 112, 65
+    .word   dl
 
-VBI
-    LDY     MERK
-    LDA     TAB1, Y
-    STA     POS1 + 1
-    LDA     COLO, Y
-    STA     PPOO1 + 1
 
-    LDA     TAB2, Y
-    CLC
-    SBC     #31
-    ASL
-    ASL
-    ASL
-    TAY
-    LDX     #0
-QW1
-    LDA     225 * 256, Y
-    STA     $B0 * 256 + 1024 + 100, X
-    INY
-    INX 
-    CPX     #8
-    BNE     QW1
-    INC     MERK
-    LDA     MERK
-    CMP     #4
-    BNE     JK1
-    LDA     #0
-    STA     MERK
+dli
+    pha
+pos1
+    lda     #100
+    sta     53248
+ppoo1
+    lda     #0
+    sta     53266
+    sta     54282 
+    pla 
+    rti 
 
-JK1
-    JMP     58463
+vbi
+    ldy     merk
+    lda     tab1, y
+    sta     pos1 + 1
+    lda     colo, y
+    sta     ppoo1 + 1
 
-TAB1
-    .BYTE   80, 100, 120, 140, 180
-COLO 
-    .BYTE   0, 85, 170, 230, 88 
+    lda     tab2, y
+    clc
+    sbc     #31
+    asl
+    asl
+    asl
+    tay
+    ldx     #0
+qw1
+    lda     225 * 256, y
+    sta     $b0 * 256 + 1024 + 100, x
+    iny
+    inx 
+    cpx     #8
+    bne     qw1
+    inc     merk
+    lda     merk
+    cmp     #4
+    bne     jk1
+    lda     #0
+    sta     merk
 
-MERK 
-    .BYTE   0
+jk1
+    jmp     58463
 
-TAB2
-    .SBYTE "ATARI"
+tab1
+    .byte   80, 100, 120, 140, 180
+colo 
+    .byte   0, 85, 170, 230, 88 
+
+merk 
+    .byte   0
+
+tab2
+    .sbyte "ATARI"
 
 

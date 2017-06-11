@@ -1,52 +1,52 @@
 
     *=$a800
 
-    LDA     #<DL
-    STA     560
-    LDA     #>DL
-    STA     561
-    LDA     #<DLI
-    STA     512
-    LDA     #>DLI 
-    STA     513
-    LDA     #192
-    STA     54286 
-LOOP
-    JMP     LOOP
+    lda     #<dl
+    sta     560
+    lda     #>dl
+    sta     561
+    lda     #<dli
+    sta     512
+    lda     #>dli 
+    sta     513
+    lda     #192
+    sta     54286 
+loop
+    jmp     loop
 
-DL
-    .BYTE   112, 112, 240, 114 
-    .WORD   TEXT
-    .BYTE   65
-    .WORD   DL
+dl
+    .byte   112, 112, 240, 114 
+    .word   text
+    .byte   65
+    .word   dl
 
-DLI 
-    PHA
-    TYA
-    PHA
-    LDY     #0
-ROW
-    LDA     0, Y
-    STA     54282
-    STA     54276
+dli 
+    pha
+    tya
+    pha
+    ldy     #0
+row
+    lda     0, y
+    sta     54282
+    sta     54276
 
-    STA     53272 
-    STA     53273 
-    STA     53274 
-    INY
-    CPY     #254
-    BNE     ROW
+    sta     53272 
+    sta     53273 
+    sta     53274 
+    iny
+    cpy     #254
+    bne     row
 
-    PLA
-    TAY
-    PLA 
-    RTI 
+    pla
+    tay
+    pla 
+    rti 
 
-TAB1
-    .BYTE    1, 1, 1, 0, 0, 0, 0
+tab1
+    .byte    1, 1, 1, 0, 0, 0, 0
     
-TEXT    
-    .SBYTE   "     DLI TEXT DEMO 123"
+text    
+    .sbyte   "     DLI TEXT DEMO 123"
 
 
 

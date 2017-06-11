@@ -1,49 +1,49 @@
 
     *=$a800
-; Clear player data
+; clear player data
 
 
-; Set DLI
-    LDA     #<DL
-    STA     560
-    LDA     #>DL
-    STA     561
-    LDA     #<DLI
-    STA     512
-    LDA     #>DLI
-    STA     513
-    LDA     #192
-    STA     54286
+; set dli
+    lda     #<dl
+    sta     560
+    lda     #>dl
+    sta     561
+    lda     #<dli
+    sta     512
+    lda     #>dli
+    sta     513
+    lda     #192
+    sta     54286
 
-MAIN
-    JMP MAIN
+main
+    jmp main
 
-DL
-    .BYTE   112, 240, 112, 112, 112, 112
-    .BYTE   65
-    .WORD   DL
+dl
+    .byte   112, 240, 112, 112, 112, 112
+    .byte   65
+    .word   dl
 
 
-DLI
-    PHA
-    TYA 
-    PHA 
+dli
+    pha
+    tya 
+    pha 
 
-    LDY     #0
-TU1 
-    LDA     TAB1, Y
-    STA     54282
-    STA     53274
-    INY 
-    CPY     #33
-    BNE     TU1
+    ldy     #0
+tu1 
+    lda     tab1, y
+    sta     54282
+    sta     53274
+    iny 
+    cpy     #33
+    bne     tu1
     
-    PLA
-    TAY
-    PLA 
-    RTI 
+    pla
+    tay
+    pla 
+    rti 
 
-TAB1 
-    .BYTE   112, 114, 116, 118, 120, 122, 124, 126
-    .BYTE   126, 124, 122, 120, 118, 116, 114, 112
-    .BYTE   62, 60, 58, 56, 54, 52, 50, 48, 0
+tab1 
+    .byte   112, 114, 116, 118, 120, 122, 124, 126
+    .byte   126, 124, 122, 120, 118, 116, 114, 112
+    .byte   62, 60, 58, 56, 54, 52, 50, 48, 0

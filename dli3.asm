@@ -1,128 +1,128 @@
 
-    *$a800
-; Clear player data
+    *=$a800
+; clear player data
 
-    LDY     #0
-    LDA     #0
-TU1 
-    STA     176 * 256 + 1024, Y
-    INY
-    CPY     #0
-    BNE     TU1 
-
-
-; Store player data
-    LDY     #0
-TU2
-    LDA     DATA1, Y
-    STA     180 * 256 + 50, Y
-    STA     180 * 256 + 140, Y
-    LDA     DATA2, Y
-    STA     180 * 256 + 90, Y
-    STA     180 * 256 + 190, Y
-    INY
-    CPY     #16
-    BNE     TU2
-
-; Set DLI
-    LDA     #<DL1
-    STA     560
-    LDA     #>DL1
-    STA     561
-    LDA     #<DLI1
-    STA     512
-    LDA     #>DLI1
-    STA     513
-    LDA     #192
-    STA     54286
+    ldy     #0
+    lda     #0
+tu1 
+    sta     176 * 256 + 1024, y
+    iny
+    cpy     #0
+    bne     tu1 
 
 
-MAIN
-    LDA     #3
-    STA     53277       ; GRACTL
-    LDA     #176 
-    STA     54279       ; PMBASE
-    LDA     #62
-    STA     559        ; SDMCTL
-    RTS
+; store player data
+    ldy     #0
+tu2
+    lda     data1, y
+    sta     180 * 256 + 50, y
+    sta     180 * 256 + 140, y
+    lda     data2, y
+    sta     180 * 256 + 90, y
+    sta     180 * 256 + 190, y
+    iny
+    cpy     #16
+    bne     tu2
 
-DLI1
-    PHA
-    LDA     #180
-    STA     53248       ; HPOSP0
-    LDA     #7 * 16 + 6 
-    STA     53266       ; COLPM0
-
-    STA     54282       ; WSYNC
-    LDA     #<DLI2
-    STA     512
-    LDA     #>DLI2
-    STA     513
-    PLA
-    RTI
-
-DLI2
-    PHA
-    LDA     #140
-    STA     53248
-    LDA     #3 * 16 + 8
-    STA     53266
-    LDA     #1
-    STA     53256       ; SIZEP0
-    STA     54282
-    LDA     #<DLI3
-    STA     512
-    LDA     #>DLI3
-    STA     513
-    PLA
-    RTI
+; set dli
+    lda     #<dl1
+    sta     560
+    lda     #>dl1
+    sta     561
+    lda     #<dli1
+    sta     512
+    lda     #>dli1
+    sta     513
+    lda     #192
+    sta     54286
 
 
+main
+    lda     #3
+    sta     53277       ; GRACTL
+    lda     #176 
+    sta     54279       ; PMBASE
+    lda     #62
+    sta     559         ; SDMCTL
+    rts
 
-DLI3
-    PHA
-    LDA     #0
-    STA     53256
-    LDA     #100
-    STA     53248
-    LDA     #10 * 16 + 8
-    STA     53266
-    STA     54282
+dli1
+    pha
+    lda     #180
+    sta     53248       ; HPOSP0
+    lda     #7 * 16 + 6 
+    sta     53266       ; COLPM0
 
-    LDA     #<DLI4
-    STA     512
-    LDA     #>DLI4
-    STA     513
-    PLA
-    RTI
+    sta     54282       ; WSYNC
+    lda     #<dli2
+    sta     512
+    lda     #>dli2
+    sta     513
+    pla
+    rti
 
-
-DLI4
-    PHA
-    LDA     #60
-    STA     53248
-    LDA     #4 * 16 + 6
-    STA     53266
-    STA     54282
-
-    LDA     #<DLI1
-    STA     512
-    LDA     #>DLI1
-    STA     513
-    PLA
-    RTI
-
-DL1
-    .BYTE   112, 112, 112, 112, 240
-    .BYTE   112, 112, 112, 112, 240
-    .BYTE   112, 112, 112, 112, 112, 240
-    .BYTE   112, 112, 112, 112, 112, 240
-    .BYTE   65 
-    .WORD   DL1
+dli2
+    pha
+    lda     #140
+    sta     53248
+    lda     #3 * 16 + 8
+    sta     53266
+    lda     #1
+    sta     53256       ; SIZEP0
+    sta     54282
+    lda     #<dli3
+    sta     512
+    lda     #>dli3
+    sta     513
+    pla
+    rti
 
 
-DATA1
-    .BYTE   36, 36, 126, 66, 90, 126, 24, 60, 126, 255, 189, 189, 36, 36, 102, 102
-DATA2
-    .BYTE   60, 126, 153, 90, 60, 24, 24, 24, 24, 24, 60, 126, 60, 24, 60, 126
+
+dli3
+    pha
+    lda     #0
+    sta     53256
+    lda     #100
+    sta     53248
+    lda     #10 * 16 + 8
+    sta     53266
+    sta     54282
+
+    lda     #<dli4
+    sta     512
+    lda     #>dli4
+    sta     513
+    pla
+    rti
+
+
+dli4
+    pha
+    lda     #60
+    sta     53248
+    lda     #4 * 16 + 6
+    sta     53266
+    sta     54282
+
+    lda     #<dli1
+    sta     512
+    lda     #>dli1
+    sta     513
+    pla
+    rti
+
+dl1
+    .byte   112, 112, 112, 112, 240
+    .byte   112, 112, 112, 112, 240
+    .byte   112, 112, 112, 112, 112, 240
+    .byte   112, 112, 112, 112, 112, 240
+    .byte   65 
+    .word   dl1
+
+
+data1
+    .byte   36, 36, 126, 66, 90, 126, 24, 60, 126, 255, 189, 189, 36, 36, 102, 102
+data2
+    .byte   60, 126, 153, 90, 60, 24, 24, 24, 24, 24, 60, 126, 60, 24, 60, 126
 

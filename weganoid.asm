@@ -18,7 +18,7 @@ SIZEP0  = $D008
 GRACTL  = $D01D
 RANDOM  = $D20A
 PMBASE  = $D407
-SETVBV  = $E45C
+setVBV  = $E45C
 XITVBV  = $E462
 
 
@@ -26,462 +26,462 @@ XITVBV  = $E462
 
     *=$A800
 
-    JMP START
+    jmp start
 
-DLIST
-    .BYTE   $70, $70, $70, (MOD+$40)
-    .WORD   MAP
-    .BYTE   MOD, MOD, MOD, MOD ,MOD
-    .BYTE   MOD, MOD, MOD, MOD ,MOD
-    .BYTE   MOD, MOD, MOD, MOD ,MOD
-    .BYTE   MOD, MOD, MOD, MOD ,MOD
-    .BYTE   MOD, MOD, MOD,$41
-    .WORD   DLIST
+dlist
+    .byte   $70, $70, $70, (MOD+$40)
+    .word   MAP
+    .byte   MOD, MOD, MOD, MOD ,MOD
+    .byte   MOD, MOD, MOD, MOD ,MOD
+    .byte   MOD, MOD, MOD, MOD ,MOD
+    .byte   MOD, MOD, MOD, MOD ,MOD
+    .byte   MOD, MOD, MOD,$41
+    .word   dlist
 
-DLTXT
-    .BYTE   $70, $70, $70, $70, $70
-    .BYTE   $70, $70, $70, (MOD+$40)
-    .WORD   TTXT
-    .BYTE   $70, MOD, $70, MOD, $41
-    .WORD   DLTXT
+dltxt
+    .byte   $70, $70, $70, $70, $70
+    .byte   $70, $70, $70, (MOD+$40)
+    .word   ttxt
+    .byte   $70, MOD, $70, MOD, $41
+    .word   dltxt
 
-TTXT
-    .SBYTE "------WEGANOID------"
-    .SBYTE "----ATARI MAGAZIN---"
-    .SBYTE "---KNOPF DRUECKEN---"
-
-
-PLAYERX
-    .BYTE 0
-PX
-    .BYTE 0
-PY
-    .BYTE 0
-VX
-    .BYTE 0
-VY
-    .BYTE 0
-XMASKE
-    .BYTE 0
-YMASKE
-    .BYTE 0
-COUNT
-    .BYTE 0
-FLAG
-    .BYTE 0
-POINT
-    .BYTE 0
+ttxt
+    .sbyte "------WEGANOID------"
+    .sbyte "----ATARI MAGAZIN---"
+    .sbyte "---KNOPF DRUECKEN---"
 
 
-START
-    LDA     #$E0
-    STA     CHBAS
-    LDA     #<DLTXT
-    LDX     #>DLTXT
-    STA     SDLSTL
-    STX     SDLSTL + 1
-
-; Playfield generate
-    LDA     #<MAP
-    STA     DEST
-    LDA     #>MAP
-    STA     DEST + 1
-    LDA     #0
-    STA     COUNT
-
-NXTZEIL
-    LDX     COUNT
-    LDA     PFIELD, X
-    ASL
-    TAX
-    LDA     ZTAB, X
-    STA     SOURCE
-    LDA     ZTAB + 1, X
-    STA     SOURCE + 1
-    LDY     #19
-NXTBYT
-    LDA     (SOURCE), y
-    STA     (DEST), y
-    DEY
-    BPL     NXTBYT
-    CLC
-    LDA     DEST
-    ADC     #20
-    STA     DEST
-    BCC     S1
-    INC     DEST+1
-S1
-    INC     COUNT
-    LDA     COUNT
-    CMP     #24
-    BNE     NXTZEIL
-
-; Charset init
-
-    LDA     #0
-    TAX
-NXTCLR
-    STA     ZSADR, X
-    STA     ZSADR + 256, X
-    INX
-    BNE     NXTCLR
-    LDX     #23
-NXTZS
-    LDA     CHARSET, X
-    STA     ZSADR, X
-    DEX
-    BPL     NXTZS
-
-WAIT
-    LDA     STRIG0
-    BNE     WAIT
-
-; Game start
-
-    LDA     #>ZSADR
-    STA     CHBAS
-    LDA     #<DLIST
-    LDX     #>DLIST
-    STA     SDLSTL
-    STX     SDLSTL+1
-
-    JSR     INITPM
-
-    LDA     #151
-    STA     PY
-    LDA     RANDOM
-    AND     #$7F
-    CLC
-    ADC     #16
-    STA     PX
-    LDA     #1
-    STA     VX
-    LDA     #$FE 
-    STA     VY
-    LDA     #0
-    STA     FLAG
-    LDA     #40
-    STA     POINT
-    LDY     #<VBIPGM
-    LDX     #>VBIPGM
-    LDA     #7
-    JSR     SETVBV
-
-FOREVER
-    LDA     FLAG
-    BMI     END
-    LDA     POINT
-    BNE     FOREVER
-
-END
-    LDY     #<XITVBV
-    LDX     #>XITVBV
-    LDA     #7
-    JSR     SETVBV
-    LDA     #0
-    STA     HPOSP0
-    STA     HPOSP0+1
-    JMP     START
-
-; VBI
-
-VBIPGM
-    CLD
-    LDX     PLAYERX
-    LDA     STICK0
-    AND     #4
-    BNE     V1
-    CPX     #8
-    BEQ     V2
-    DEX
-    DEX
-    JMP     V2
-V1
-    LDA     STICK0
-    AND     #8
-    BNE     V2
-    CPX     #136
-    BEQ     V2
-    INX
-    INX
-V2
-    STX     PLAYERX
-    TXA
-    CLC
-    ADC     #$30
-    STA     HPOSP0
-    LDA     #0
-    STA     XMASKE
-    STA     YMASKE
-
-    JSR     COLPLAY
-    JSR     COLBALL
-    JSR     MOVEBALL
-    JSR     SETBALL
-    JMP     XITVBV
+playerx
+    .byte 0
+px
+    .byte 0
+py
+    .byte 0
+vx
+    .byte 0
+vy
+    .byte 0
+xmaske
+    .byte 0
+ymaske
+    .byte 0
+count
+    .byte 0
+flag
+    .byte 0
+point
+    .byte 0
 
 
-; Ball move
+start
+    lda     #$e0
+    sta     CHBAS
+    lda     #<dltxt
+    ldx     #>dltxt
+    sta     SDLSTL
+    stx     SDLSTL + 1
 
-MOVEBALL
-    CLC
-    LDA     PX
-    ADC     VX
-    TAX
-    CLC
-    LDA     PY
-    ADC     VY
-    TAY
-    RTS
+; playfield generate
+    lda     #<MAP
+    sta     DEST
+    lda     #>MAP
+    sta     DEST + 1
+    lda     #0
+    sta     count
 
-; Ball colision 
+nxtzeil
+    ldx     count
+    lda     pfield, x
+    asl
+    tax
+    lda     ztab, x
+    sta     SOURCE
+    lda     ztab + 1, x
+    sta     SOURCE + 1
+    ldy     #19
+nxtbyt
+    lda     (SOURCE), y
+    sta     (DEST), y
+    dey
+    bpl     nxtbyt
+    clc
+    lda     DEST
+    adc     #20
+    sta     DEST
+    bcc     s1
+    inc     DEST+1
+s1
+    inc     count
+    lda     count
+    cmp     #24
+    bne     nxtzeil
 
-COLBALL
-    LDX     PX
-    LDY     PY
-    LDA     VX 
-    BPL     RIGHT
-    DEX
-    JSR     COL 
-    ORA     XMASKE
-    STA     XMASKE 
-    DEY
-    JSR     COL
-    ORA     XMASKE 
-    STA     XMASKE 
-    JMP     YTEST
+; charset init
 
-RIGHT 
-    INX 
-    INY 
-    JSR     COL
-    ORA     XMASKE
-    STA     XMASKE 
-    DEY 
-    JSR     COL 
-    ORA     XMASKE 
-    STA     XMASKE 
+    lda     #0
+    tax
+nxtclr
+    sta     ZSADR, x
+    sta     ZSADR + 256, x
+    inx
+    bne     nxtclr
+    ldx     #23
+nxtzs
+    lda     charset, x
+    sta     ZSADR, x
+    dex
+    bpl     nxtzs
 
-YTEST 
-    LDX     PX
-    LDY     PY
-    LDA     VY
-    BMI     TOP
-    INY 
-    JSR     COL
-    ORA     YMASKE
-    STA     YMASKE
-    INX 
-    JSR     COL
-    ORA     YMASKE 
-    STA     YMASKE 
-    JMP     COLEND
+wait
+    lda     STRIG0
+    bne     wait
 
-TOP
-    DEY
-    DEY 
-    JSR     COL
-    ORA     YMASKE
-    STA     YMASKE 
-    INX 
-    JSR     COL
-    ORA     YMASKE 
-    STA     YMASKE 
+; game start
 
-COLEND 
-    LDA     XMASKE
-    BPL     KB1
-    LDA     VX
-    EOR     XMASKE
-    STA     VX
-    INC     VX 
+    lda     #>ZSADR
+    sta     CHBAS
+    lda     #<dlist
+    ldx     #>dlist
+    sta     SDLSTL
+    stx     SDLSTL+1
 
-KB1
-    LDA     YMASKE 
-    BPL     KB2
-    LDA     VY
-    EOR     YMASKE
-    STA     VY
-    INC     VY 
+    jsr     initpm
 
-KB2 
-    RTS 
+    lda     #151
+    sta     py
+    lda     RANDOM
+    and     #$7f
+    clc
+    adc     #16
+    sta     px
+    lda     #1
+    sta     vx
+    lda     #$fe 
+    sta     vy
+    lda     #0
+    sta     flag
+    lda     #40
+    sta     point
+    ldy     #<vbipgm
+    ldx     #>vbipgm
+    lda     #7
+    jsr     setVBV
 
-COLPLAY
-    LDA     VY
-    BMI     CPEND 
-    LDY     PY
-    CPY     #193
-    BCC     CPS0
-    LDA     #$FF
-    STA     FLAG
-    JMP     CPEND 
+forever
+    lda     flag
+    bmi     end
+    lda     point
+    bne     forever
 
-CPS0
-    CPY     #183
-    BCC     CPEND 
-    BNE     CPEND 
+end
+    ldy     #<XITVBV
+    ldx     #>XITVBV
+    lda     #7
+    jsr     setVBV
+    lda     #0
+    sta     HPOSP0
+    sta     HPOSP0+1
+    jmp     start
 
-    SEC 
-    LDA     PX
-    SBC     PLAYERX 
-    CMP     #$FF
-    BEQ     HIT
+; vbi
 
-CPS2 
-    CMP     #15
-    BEQ     HIT 
-    BCS     CPEND 
-HIT
-    LDA     #$FF
-    STA     YMASKE
-CPEND 
-    RTS 
+vbipgm
+    cld
+    ldx     playerx
+    lda     STICK0
+    and     #4
+    bne     v1
+    cpx     #8
+    beq     v2
+    dex
+    dex
+    jmp     v2
+v1
+    lda     STICK0
+    and     #8
+    bne     v2
+    cpx     #136
+    beq     v2
+    inx
+    inx
+v2
+    stx     playerx
+    txa
+    clc
+    adc     #$30
+    sta     HPOSP0
+    lda     #0
+    sta     xmaske
+    sta     ymaske
+
+    jsr     colplay
+    jsr     colball
+    jsr     moveball
+    jsr     setball
+    jmp     XITVBV
 
 
-COL 
-    LDA     #0
-    STA     SOURCE+1
-    TXA
-    PHA
-    TYA
-    PHA 
-    LSR
-    LSR 
-    LSR 
-    STA     SOURCE 
-    ASL
-    ASL
-    CLC 
-    ADC     SOURCE 
-    ASL 
-    STA     SOURCE 
-    ASL     SOURCE 
-    ROL     SOURCE+1
-    CLC
-    LDA     SOURCE 
-    ADC     #<MAP
-    STA     SOURCE 
-    LDA     #>MAP
-    ADC     SOURCE+1
-    STA     SOURCE+1
-    TXA
-    LSR
-    LSR
-    LSR
-    TAY
-    LDA     (SOURCE), Y
-    AND     #$3F
-    BEQ     C1
-    LDX     #$FF
-    CMP     #2
-    BNE     C2 
-    LDA     #0
-    STA     (SOURCE), Y
-    DEC     POINT 
-    JMP     C2
-C1
-    LDX     #0
-C2
-    STX     COUNT 
-    PLA     
-    TAY 
-    PLA 
-    TAX
-    LDA     COUNT 
-    RTS 
+; ball move
+
+moveball
+    clc
+    lda     px
+    adc     vx
+    tax
+    clc
+    lda     py
+    adc     vy
+    tay
+    rts
+
+; ball colision 
+
+colball
+    ldx     px
+    ldy     py
+    lda     vx 
+    bpl     right
+    dex
+    jsr     col 
+    ora     xmaske
+    sta     xmaske 
+    dey
+    jsr     col
+    ora     xmaske 
+    sta     xmaske 
+    jmp     ytest
+
+right 
+    inx 
+    iny 
+    jsr     col
+    ora     xmaske
+    sta     xmaske 
+    dey 
+    jsr     col 
+    ora     xmaske 
+    sta     xmaske 
+
+ytest 
+    ldx     px
+    ldy     py
+    lda     vy
+    bmi     top
+    iny 
+    jsr     col
+    ora     ymaske
+    sta     ymaske
+    inx 
+    jsr     col
+    ora     ymaske 
+    sta     ymaske 
+    jmp     colend
+
+top
+    dey
+    dey 
+    jsr     col
+    ora     ymaske
+    sta     ymaske 
+    inx 
+    jsr     col
+    ora     ymaske 
+    sta     ymaske 
+
+colend 
+    lda     xmaske
+    bpl     kb1
+    lda     vx
+    eor     xmaske
+    sta     vx
+    inc     vx 
+
+kb1
+    lda     ymaske 
+    bpl     kb2
+    lda     vy
+    eor     ymaske
+    sta     vy
+    inc     vy 
+
+kb2 
+    rts 
+
+colplay
+    lda     vy
+    bmi     cpend 
+    ldy     py
+    cpy     #193
+    bcc     cps0
+    lda     #$ff
+    sta     flag
+    jmp     cpend 
+
+cps0
+    cpy     #183
+    bcc     cpend 
+    bne     cpend 
+
+    sec 
+    lda     px
+    sbc     playerx 
+    cmp     #$ff
+    beq     hit
+
+cps2 
+    cmp     #15
+    beq     hit 
+    bcs     cpend 
+hit
+    lda     #$ff
+    sta     ymaske
+cpend 
+    rts 
+
+
+col 
+    lda     #0
+    sta     SOURCE+1
+    txa
+    pha
+    tya
+    pha 
+    lsr
+    lsr 
+    lsr 
+    sta     SOURCE 
+    asl
+    asl
+    clc 
+    adc     SOURCE 
+    asl 
+    sta     SOURCE 
+    asl     SOURCE 
+    rol     SOURCE+1
+    clc
+    lda     SOURCE 
+    adc     #<MAP
+    sta     SOURCE 
+    lda     #>MAP
+    adc     SOURCE+1
+    sta     SOURCE+1
+    txa
+    lsr
+    lsr
+    lsr
+    tay
+    lda     (SOURCE), y
+    and     #$3f
+    beq     c1
+    ldx     #$ff
+    cmp     #2
+    bne     c2 
+    lda     #0
+    sta     (SOURCE), y
+    dec     point 
+    jmp     c2
+c1
+    ldx     #0
+c2
+    stx     count 
+    pla     
+    tay 
+    pla 
+    tax
+    lda     count 
+    rts 
     
 
-SETBALL 
-    STX     PX
-    CLC 
-    LDA     PY
-    ADC     #$20
-    TAX 
-    LDA     #0
-    STA     ADRPM + $500, X
-    STA     ADRPM + $4FF, X
-    TYA     
-    STA     PY
-    CLC
-    ADC     #$20
-    TAX
-    LDA     #$C0
-    STA     ADRPM + $500, X
-    STA     ADRPM + $4FF, X
-    CLC 
-    LDA     PX
-    ADC     #$30
-    STA     HPOSP0 + 1
-    RTS 
+setball 
+    stx     px
+    clc 
+    lda     py
+    adc     #$20
+    tax 
+    lda     #0
+    sta     ADRPM + $500, x
+    sta     ADRPM + $4ff, x
+    tya     
+    sta     py
+    clc
+    adc     #$20
+    tax
+    lda     #$c0
+    sta     ADRPM + $500, x
+    sta     ADRPM + $4ff, x
+    clc 
+    lda     px
+    adc     #$30
+    sta     HPOSP0 + 1
+    rts 
 
-INITPM 
-    LDA     #0
-    LDX     #0
-DELETE
-    STA     ADRPM + $300, X
-    STA     ADRPM + $400, X
-    STA     ADRPM + $500, X
-    STA     ADRPM + $600, X
-    STA     ADRPM + $700, X
-    DEX 
-    BNE     DELETE 
+initpm 
+    lda     #0
+    ldx     #0
+delete
+    sta     ADRPM + $300, x
+    sta     ADRPM + $400, x
+    sta     ADRPM + $500, x
+    sta     ADRPM + $600, x
+    sta     ADRPM + $700, x
+    dex 
+    bne     delete 
 
-    LDX     #7
-    LDA     #$FF 
+    ldx     #7
+    lda     #$ff 
 
-SHPCOPY 
-    STA     ADRPM + $4DB, X
-    DEX 
-    BPL     SHPCOPY 
+shpcopy 
+    sta     ADRPM + $4db, x
+    dex 
+    bpl     shpcopy 
 
-    LDA     #>ADRPM
-    STA     PMBASE 
-    LDA     #$0C
-    STA     PCOLR0 
-    STA     PCOLR0 + 1
-    LDA     #1
-    STA     SIZEP0 
-    LDA     #1
-    STA     GPRIOR 
-    LDA     #$3A 
-    STA     SDMCTL 
-    LDA     #2
-    STA     GRACTL 
-    LDA     #72
-    STA     PLAYERX 
-    RTS 
+    lda     #>ADRPM
+    sta     PMBASE 
+    lda     #$0c
+    sta     PCOLR0 
+    sta     PCOLR0 + 1
+    lda     #1
+    sta     SIZEP0 
+    lda     #1
+    sta     GPRIOR 
+    lda     #$3a 
+    sta     SDMCTL 
+    lda     #2
+    sta     GRACTL 
+    lda     #72
+    sta     playerx 
+    rts 
 
-ROW1 
-    .BYTE   65, 65, 65, 65, 65
-    .BYTE   65, 65, 65, 65, 65
-    .BYTE   65, 65, 65, 65, 65
-    .BYTE   65, 65, 65, 65, 65
-ROW2 
-    .BYTE   65, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    .BYTE   0, 0, 0, 0, 0, 0, 0, 0, 0, 65
-ROW3 
-    .BYTE   65, 0, 66, 0, 66, 0, 66, 0, 66, 0
-    .BYTE   66, 0, 66 ,0, 66, 0, 66, 0, 0, 65
-ROW4 
-    .BYTE   65, 0 , 0, 66, 0, 66 ,0 , 66 , 0 ,66
-    .BYTE   0, 66, 0, 66, 0, 66, 0, 66, 0, 65
+row1 
+    .byte   65, 65, 65, 65, 65
+    .byte   65, 65, 65, 65, 65
+    .byte   65, 65, 65, 65, 65
+    .byte   65, 65, 65, 65, 65
+row2 
+    .byte   65, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    .byte   0, 0, 0, 0, 0, 0, 0, 0, 0, 65
+row3 
+    .byte   65, 0, 66, 0, 66, 0, 66, 0, 66, 0
+    .byte   66, 0, 66 ,0, 66, 0, 66, 0, 0, 65
+row4 
+    .byte   65, 0 , 0, 66, 0, 66 ,0 , 66 , 0 ,66
+    .byte   0, 66, 0, 66, 0, 66, 0, 66, 0, 65
 
-ZTAB 
-    .WORD   ROW1, ROW2, ROW3, ROW4  
+ztab 
+    .word   row1, row2, row3, row4  
 
-PFIELD 
-    .BYTE   0, 1, 1, 2, 1, 3, 1, 2, 1, 3, 1, 2
-    .BYTE   1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1
+pfield 
+    .byte   0, 1, 1, 2, 1, 3, 1, 2, 1, 3, 1, 2
+    .byte   1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1
 
-CHARSET 
-    .BYTE   $82, $44, $34, $0B 
-    .BYTE   $34, $62, $42, $81
-    .BYTE   $FF, $FF, $FF, $FF
-    .BYTE   $FF, $FF, $FF, $FF
-    .BYTE   $FF, $FF, $FF, $FF
-    .BYTE   $FF, $FF, $C3, $C3 
-    .BYTE   $C3, $C3, $FF, $FF
+charset 
+    .byte   $82, $44, $34, $0b 
+    .byte   $34, $62, $42, $81
+    .byte   $ff, $ff, $ff, $ff
+    .byte   $ff, $ff, $ff, $ff
+    .byte   $ff, $ff, $ff, $ff
+    .byte   $ff, $ff, $c3, $c3 
+    .byte   $c3, $c3, $ff, $ff
 
 
 

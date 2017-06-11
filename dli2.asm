@@ -1,91 +1,91 @@
 
     *=$a800
 
-    LDA     #<DL
-    STA     560
-    LDA     #>DL
-    STA     561
-    LDA     #<DLI
-    STA     512
-    LDA     #>DLI
-    STA     513
-    LDA     #192
-    STA     54286
+    lda     #<dl
+    sta     560
+    lda     #>dl
+    sta     561
+    lda     #<dli
+    sta     512
+    lda     #>dli
+    sta     513
+    lda     #192
+    sta     54286
 
-    LDA     #$B0
-    STA     756
+    lda     #$b0
+    sta     756
 
-    LDY     #0
-RU1
-    LDA     ZS1, Y
-    STA     $B0 * 256 + 8, Y
-    INY
-    CPY     #24
-    BNE     RU1
+    ldy     #0
+ru1
+    lda     zs1, y
+    sta     $b0 * 256 + 8, y
+    iny
+    cpy     #24
+    bne     ru1
 
-    LDY     #0
-RU2
-    LDA     TEXT, Y
-    STA     TEXT + 40, Y
-    STA     TEXT + 80, Y
-    STA     TEXT + 120, Y
-    STA     TEXT + 160, Y
-    INY
-    CPY     #40
-    BNE     RU2
+    ldy     #0
+ru2
+    lda     text, y
+    sta     text + 40, y
+    sta     text + 80, y
+    sta     text + 120, y
+    sta     text + 160, y
+    iny
+    cpy     #40
+    bne     ru2
 
 
-LOOP
-    JMP LOOP
+loop
+    jmp loop
 
-DL
-    .BYTE   112, 112, 240, 196
-    .WORD   TEXT
-    .BYTE   132, 132, 132, 132, 65
-    .WORD   DL
+dl
+    .byte   112, 112, 240, 196
+    .word   text
+    .byte   132, 132, 132, 132, 65
+    .word   dl
 
-DLI
-    PHA
-    TYA
-    PHA
+dli
+    pha
+    tya
+    pha
 
-    LDY     #0
-RU3
-    LDA     TAB1, Y
-    STA     53270
-    LDA     TAB2, Y
-    STA     53271
-    LDA     TAB3, Y
-    STA     53272
-    LDA     TAB4, Y
-    STA     53273
+    ldy     #0
+ru3
+    lda     tab1, y
+    sta     53270
+    lda     tab2, y
+    sta     53271
+    lda     tab3, y
+    sta     53272
+    lda     tab4, y
+    sta     53273
 
-    STA     54282
-    INY
-    CPY     #8
-    BNE     RU3
+    sta     54282
+    iny
+    cpy     #8
+    bne     ru3
 
-    PLA
-    TAY
-    PLA
-    RTI
+    pla
+    tay
+    pla
+    rti
 
-TAB1
-    .BYTE   48, 50, 52, 54, 56, 58, 60, 62
-TAB2
-    .BYTE   192, 194, 196, 198, 200, 202, 204, 206
-TAB3
-    .BYTE   112, 114, 116, 118, 120, 122, 124, 126
-TAB4
-    .BYTE   240, 242, 244, 246, 248, 250, 252, 254
+tab1
+    .byte   48, 50, 52, 54, 56, 58, 60, 62
+tab2
+    .byte   192, 194, 196, 198, 200, 202, 204, 206
+tab3
+    .byte   112, 114, 116, 118, 120, 122, 124, 126
+tab4
+    .byte   240, 242, 244, 246, 248, 250, 252, 254
 
-ZS1
-    .BYTE   85, 85, 85, 85, 85, 85, 85, 85
-    .BYTE   170, 170, 170, 170, 170, 170, 170, 170
-    .BYTE   255, 255, 255, 255, 255, 255, 255, 255
+zs1
+    .byte   85, 85, 85, 85, 85, 85, 85, 85
+    .byte   170, 170, 170, 170, 170, 170, 170, 170
+    .byte   255, 255, 255, 255, 255, 255, 255, 255
 
-TEXT
-    .SBYTE  "!!!!!!!!########!!!!!!!!########"
+text
+    .sbyte  "!!!!!!!!########!!!!!!!!########"
 
 
 
