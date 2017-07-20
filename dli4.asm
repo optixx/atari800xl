@@ -1,9 +1,6 @@
-
-    *=$a800
-; clear player data
-
-
-; set dli
+    run     start
+    org     $a800
+start
     lda     #<dl
     sta     560
     lda     #>dl
@@ -105,6 +102,6 @@ merk
     .byte   0
 
 tab2
-    .sbyte "ATARI"
+    .byte "ATARI"
 
 

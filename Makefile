@@ -2,26 +2,26 @@
 
 
 weganoid:
-	../../bin/atasm weganoid.asm -xtest.atr
-	../../bin/run.sh weganoid.65o
+	../../bin/mads weganoid.asm
+	../../bin/run.sh weganoid.obx
 
 dli1:
-	../../bin/atasm dli1.asm -xtest.atr
-	../../bin/run.sh dli1.65o
+	../../bin/mads dli1.asm
+	../../bin/run.sh dli1.obx
 
 dli2:
-	../../bin/atasm dli2.asm -xtest.atr
-	../../bin/run.sh dli2.65o
+	../../bin/mads dli2.asm
+	../../bin/run.sh dli2.obx
 
 dli3:
-	../../bin/atasm dli3.asm -xtest.atr
-	../../bin/run.sh dli3.65o
+	../../bin/mads dli3.asm
+	../../bin/run.sh dli3.obx
 
 dli4:
-	../../bin/atasm dli4.asm -xtest.atr
-	../../bin/run.sh dli4.65o
+	../../bin/mads dli4.asm
+	../../bin/run.sh dli4.obx
 
 dli6:
-	../../bin/atasm dli6.asm -xtest.atr
-	../../bin/run.sh dli6.65o
+	../../bin/mads dli6.asm
+	../../bin/run.sh dli6.obx
 

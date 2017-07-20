@@ -1,7 +1,6 @@
-
-    *=$a800
-; clear player data
-
+    run     start
+    org     $a800
+start
     ldy     #0
     lda     #0
 tu1 

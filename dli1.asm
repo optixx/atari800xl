@@ -1,6 +1,6 @@
-
-    *=$a800
-
+    run     start
+    org     $a800
+start
     lda     #<dl
     sta     560
     lda     #>dl
@@ -46,7 +46,7 @@ tab1
     .byte    1, 1, 1, 0, 0, 0, 0
     
 text    
-    .sbyte   "     DLI TEXT DEMO 123"
+    .byte   "     DLI TEXT DEMO 123"
 
 
 

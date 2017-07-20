@@ -1,3 +1,4 @@
+    run     start
 ADRPM   = $B800
 ZSADR   = $5000
 MAP     = $5400
@@ -24,9 +25,7 @@ XITVBV  = $E462
 
 
 
-    *=$A800
-
-    jmp start
+    org     $a800
 
 dlist
     .byte   $70, $70, $70, (MOD+$40)
@@ -46,9 +45,9 @@ dltxt
     .word   dltxt
 
 ttxt
-    .sbyte "------WEGANOID------"
-    .sbyte "----ATARI MAGAZIN---"
-    .sbyte "---KNOPF DRUECKEN---"
+    .byte "------WEGANOID------"
+    .byte "----ATARI MAGAZIN---"
+    .byte "---KNOPF DRUECKEN---"
 
 
 playerx
