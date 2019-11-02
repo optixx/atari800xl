@@ -5,12 +5,19 @@
 Some examples i collected while learing assembler for the Atari 800 XL
 
 - dli1 - DLI Sample from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/dli1.png)
 - dli2 - DLI Sample from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/dli2.png)
 - dli3 - DLI Sample from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/dli3.png)
 - dli4 - DLI Sample from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/dli4.png)
 - dli6 - DLI Sample from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/dli6.png)
 - hello - DLI text sample
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/hello.png)
 - weganoid - Game from german Atari Magazine
+![](https://github.com/optixx/atari800xl/raw/master/screenshots/weganoid.png)
 
 ## Usage
 
