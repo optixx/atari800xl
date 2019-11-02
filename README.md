@@ -1,14 +1,16 @@
 # Atari 800 XL assembler code demos
 
+## Overview 
+
 Some examples i collected while learing assembler for the Atari 800 XL
 
-- dli1
-- dli2
-- dli3
-- dli4
-- dli6
-- hello
-- weganoid
+- dli1 - DLI Sample from german Atari Magazine
+- dli2 - DLI Sample from german Atari Magazine
+- dli3 - DLI Sample from german Atari Magazine
+- dli4 - DLI Sample from german Atari Magazine
+- dli6 - DLI Sample from german Atari Magazine
+- hello - DLI text sample
+- weganoid - Game from german Atari Magazine
 
 ## Usage
 
@@ -26,7 +28,6 @@ ${ATARI_PATH}/bin/atari800 -pal -xe -xlxe_rom ${ATARI_PATH}/roms/ATARIXL.ROM -vi
 ```
 cd hello 
 make all
-make run
 ```
 
 
