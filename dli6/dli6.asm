@@ -1,5 +1,5 @@
     run     start
-    org     $a800
+    org     $0600
 start
     lda     #<dl
     sta     560
