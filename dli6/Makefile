@@ -3,8 +3,8 @@ all: run
 build:
 	mads -l -t dli6.asm
 
-script:
-	python raw2bas.py --filename dli6.obx  --start-addr 1536 --strip-header 12
+script: build
+	../scripts/obx2bas.py --filename dli6.obx  --start-addr 1536 --strip-header 12
 
 basic: script
 	run_atari_basic.sh -run dli6.bas
