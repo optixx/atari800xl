@@ -4,7 +4,7 @@ build:
 	mads -l -t dli7.asm
 
 script: build
-	../scripts/obx2bas.py --filename dli7.obx  --start-addr 1536 --strip-header 12
+	../scripts/obx2bas.py --filename dli7.obx --start-addr 16384 --strip-header 12
 
 basic: script
 	run_atari_basic.sh -run dli7.bas

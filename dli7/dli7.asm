@@ -1,5 +1,5 @@
     run     start
-    org     $0600
+    org     $4000
 
 WSYNC       = $d40a
 VCOUNT      = $d40b
