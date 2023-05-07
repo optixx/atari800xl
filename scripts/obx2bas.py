@@ -46,7 +46,7 @@ class Loader(Script):
 def main(strip_header, start_addr, filename):
     outfile = f"{os.path.splitext(filename)[0]}.bas"
     binary = open(filename, "rb").read()
-    if strip_header:
+    if strip_header > 0:
         binary = binary[strip_header:]
     s = Loader(name=outfile, addr=start_addr, binary=binary)
     print(f"Write {outfile}")
