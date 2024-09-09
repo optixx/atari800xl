@@ -1,3 +1,6 @@
 *.65o
 *.obx
 *.atr
+*.lst
+*.lab
+.DS_Store
