@@ -10,3 +10,5 @@ demo3:
 demo4:
 	run.sh -b demo4.bas
 
+demo5:
+	run.sh -b demo5.bas
