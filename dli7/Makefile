@@ -7,10 +7,10 @@ script: build
 	../scripts/obx2bas.py --filename dli7.obx --start-addr 16384 --strip-header 12
 
 basic: script
-	run_atari_basic.sh -run dli7.bas
+	run.sh -b dli7.bas
 
 run: build 
-	run_atari_rom.sh dli7.obx
+	run.sh -r dli7.obx
 
 clean:
 	rm -f dli7.obx dli7.lab dli7.lst dli7.bas

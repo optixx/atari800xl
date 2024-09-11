@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 import click
 
-class Script:
 
+class Script:
     def __init__(self, name):
         self.buffer = []
         self.lineno = 10
@@ -17,8 +17,8 @@ class Script:
     def __str__(self):
         return "\n".join(self.buffer) + "\n"
 
-class Loader(Script):
 
+class Loader(Script):
     def __init__(self, name, addr, binary):
         super().__init__(name)
         self.binary = binary
@@ -34,15 +34,16 @@ class Loader(Script):
         self.add("next x")
         self.add(f"z = usr({self.start})")
 
-    def data(self,w=8):
+    def data(self, w=8):
         for i in range(0, len(self.binary), w):
-            t = [f"{int(i)}" for i in self.binary[i:i+w]]
+            t = [f"{int(i)}" for i in self.binary[i : i + w]]
             self.add(f"data {','.join(t)}")
 
+
 @click.command()
-@click.option('--strip-header', default=12, help='Strip obx header')
-@click.option('--start-addr', default=1536, help='Start address')
-@click.option('--filename', help='Object filename')
+@click.option("--strip-header", default=12, help="Strip obx header")
+@click.option("--start-addr", default=1536, help="Start address")
+@click.option("--filename", help="Object filename")
 def main(strip_header, start_addr, filename):
     outfile = f"{os.path.splitext(filename)[0]}.bas"
     binary = open(filename, "rb").read()
@@ -52,5 +53,6 @@ def main(strip_header, start_addr, filename):
     print(f"Write {outfile}")
     open(outfile, "w").write(str(s))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

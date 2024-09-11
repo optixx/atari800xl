@@ -4,7 +4,7 @@ build:
 	mads dli1.asm
 
 run: build
-	run_atari_rom.sh dli1.obx
+	run.sh -r dli1.obx
 
 clean:
 	rm -f dli1.obx
