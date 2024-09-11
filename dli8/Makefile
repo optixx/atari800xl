@@ -7,7 +7,7 @@ script: build
 	../scripts/obx2bas.py --filename dli8.obx --start-addr 16384 --strip-header 12
 
 basic: script
-	run.sh -b -run dli8.bas
+	run.sh -b dli8.bas
 
 run: build 
 	run.sh -r dli8.obx
