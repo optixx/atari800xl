@@ -1,0 +1,487 @@
+*************************************
+*
+*            "WEGANOID"
+*
+* ASSEMBLER: ATMAS-II
+*
+* P. FINZEL                     1987
+*************************************
+*
+* Wichtige Adressen
+*
+ADRPM    EQU $B800    PM-Speicher
+ZSADR    EQU $5000    Zeichensatz-Adresse
+MAP      EQU $5400    Zeichen MAP-Adresse
+MOD      EQU 6        ANTIC Modus 6
+QUELLE   EQU $F0      Zeropage-Zeiger 1
+ZIEL     EQU $F2      Zeiger 2
+*
+* Operating System & Hardware
+*
+SDMCTL   EQU $022F  DMA-Kontrollreg.
+STICK0   EQU $0278  Shadow f. Joystick Nr. 0
+GPRIOR   EQU $026F  Prioritaeten
+PCOLR0   EQU $02C0  Farbe Players
+STRIG0   EQU $D010  Trigger 0
+CHBAS    EQU $02F4  Zeichensatz
+SDLSTL   EQU $0230  Shadowreg. D.-Listadr.
+HPOSP0   EQU $D000  Hor.-Position
+SIZEP0   EQU $D008  Breite der Player
+GRACTL   EQU $D01D  Graphik-Kontrollreg.
+RANDOM   EQU $D20A  Zufallszahl
+PMBASE   EQU $D407  PM-Basisadresse
+SETVBV   EQU $E45C  Routine f. Interruptvekoren
+XITVBV   EQU $E462  Abschluss des VBI
+*
+         ORG $A800
+*
+         JMP START
+*
+* Displaylist (entspr. GR.1)
+*
+DLIST    DFB $70,$70,$70,MOD+$40
+         DFW MAP
+         DFB MOD,MOD,MOD,MOD,MOD
+         DFB MOD,MOD,MOD,MOD,MOD
+         DFB MOD,MOD,MOD,MOD,MOD
+         DFB MOD,MOD,MOD,MOD,MOD
+         DFB MOD,MOD,MOD,$41
+         DFW DLIST
+
+*
+* Kurze Displaylist fuer Titel
+*
+DLTXT    DFB $70,$70,$70,$70,$70
+         DFB $70,$70,$70,MOD+$40
+         DFW TTXT
+         DFB $70,MOD,$70,MOD,$41
+         DFW DLTXT
+*
+* Titelbildschirm
+*
+TTXT     ASC %------WEGANOID------%
+         ASC %----ATARI MAGAZIN---%
+         ASC %---KNOPF DRUECKEN---%
+*
+* Variable
+*
+SCHLAGX  DFB 0 Schlaegerposition
+PX       DFB 0 Ballposition X
+PY       DFB 0 Ballposition Y
+VX       DFB 0 Ballgeschwindigkeit X
+VY       DFB 0 Ballgeschwindigkeit Y
+XMASKE   DFB 0 Flag f. Richtungsumkehr
+YMASKE   DFB 0
+ZAEHL    DFB 0 Hilfsregister
+FLAG     DFB 0 Flag fuer Spielende
+ANZAHL   DFB 0 Anzahl d. Steine
+*
+*------------------------------------
+* Hauptprogramm
+*------------------------------------
+START    LDA #$E0     normaler Zeichen-
+         STA CHBAS    satz
+         LDA #DLTXT:L Titelbildschirm
+         LDX #DLTXT:H anzeigen
+         STA SDLSTL
+         STX SDLSTL+1
+*
+* Spielfeld erzeugen
+*
+         LDA #MAP:L   Zieladresse ist
+         STA ZIEL     Bildschirm-
+         LDA #MAP:H   speicher
+         STA ZIEL+1
+         LDA #0
+         STA ZAEHL
+*
+NXTZEIL  LDX ZAEHL     Art der Zeile
+         LDA SPFELD,X  ermitteln
+         ASL
+         TAX
+         LDA ZTAB,X    Quelladresse
+         STA QUELLE    aus 'Zeilen-
+         LDA ZTAB+1,X  tabelle'
+         STA QUELLE+1  Zeile kopieren
+         LDY #19
+NXTBYT   LDA (QUELLE),Y
+         STA (ZIEL),Y
+         DEY
+         BPL NXTBYT
+         CLC
+         LDA ZIEL      naechste Zeile
+         ADC #20       ist 20 Bytes
+         STA ZIEL      weiter
+         BCC S1
+         INC ZIEL+1
+S1       INC ZAEHL
+
+         LDA ZAEHL     schon 24 Zeilen?
+         CMP #24
+         BNE NXTZEIL   nein -->
+*
+* Zeichensatz vorbereiten
+*
+         LDA #0        Bereich fuer
+         TAX           Zeichensatz loeschen
+NXTCLR   STA ZSADR,X
+         STA ZSADR+256,X
+         INX
+         BNE NXTCLR
+         LDX #23       vier Zeichen
+NXTZS    LDA ZSATZ,X   kopieren
+         STA ZSADR,X
+         DEX
+         BPL NXTZS
+
+WARTE    LDA STRIG0    warten, bis
+         BNE WARTE     Knopf gedrueckt
+*
+* Spiel beginnt...
+*
+         LDA #ZSADR:H  Zeichensatz
+         STA CHBAS     aendern
+         LDA #DLIST:L  Spielfeld an-
+         LDX #DLIST:H  zeigen
+         STA SDLSTL
+         STX SDLSTL+1
+
+         JSR INITPM    PM-Graphik init.
+
+         LDA #151      Anfangskoordinaten
+         STA PY        des Balles
+         LDA RANDOM    ermitteln
+         AND #$7F
+         CLC
+         ADC #16
+         STA PX
+         LDA #1
+         STA VX        Bewegung nach
+         LDA #$FE      oben rechts
+         STA VY
+         LDA #0        Ende-Flag auf 0
+         STA FLAG
+         LDA #40       Vierzig Steine
+         STA ANZAHL
+         LDY #VBIPGM:L VBI-Routine
+         LDX #VBIPGM:H starten
+         LDA #7        deferred VBI
+         JSR SETVBV
+*
+* Warten auf Spielende
+*
+ENDLOS   LDA FLAG      Ball entkommen?
+         BMI SCHLUSS   Ja!-->
+         LDA ANZAHL    noch Steine da?
+         BNE ENDLOS    Ja -->
+SCHLUSS  LDY #XITVBV:L VBI-Programm
+         LDX #XITVBV:H anhalten
+         LDA #7
+         JSR SETVBV
+         LDA #0        Player weg vom
+         STA HPOSP0    Bild
+         STA HPOSP0+1
+         JMP START     und von vorne
+
+*------------------------------------
+* VBI-Routine
+* -Schlaeger und Ball bewegen
+* -Kollisionen ermitteln
+*------------------------------------
+VBIPGM   CLD
+         LDX SCHLAGX   Position des Schlaegers
+         LDA STICK0    Joystick 0
+         AND #4        nach links?
+         BNE V1        nein -->
+         CPX #8        schon am Rand?
+         BEQ V2        Ja! -->
+         DEX           zweimal nach links
+         DEX
+         JMP V2        fertig ==>
+
+V1       LDA STICK0    Joystick 0
+         AND #8        nach rechts?
+         BNE V2        nein -->
+         CPX #136      rechter Rand?
+         BEQ V2        Ja -->
+         INX           zweimal nach
+         INX           rechts
+V2       STX SCHLAGX   Position merken
+         TXA
+         CLC           Wert fuer Positions-
+         ADC #$30      register berechnen
+         STA HPOSP0
+         LDA #0
+         STA XMASKE
+         STA YMASKE
+*
+* Kollisionen Ball mit ...
+*
+         JSR KOLSCHL   ...Schlaeger
+         JSR KOLBALL   ...Stein/Rand
+         JSR BEWBALL   Ball bewegen
+         JSR SETBALL   und anzeigen
+         JMP XITVBV    VBI-Ende
+
+*------------------------------------
+* Neue Ballposition berechnen
+*------------------------------------
+BEWBALL  CLC
+         LDA PX        addiere VX
+         ADC VX        zur X-Position
+         TAX           ins X-Reg.
+         CLC
+         LDA PY        addiere VY zur
+         ADC VY        Y-Position
+         TAY           ins Y-Reg.
+         RTS
+
+*------------------------------------
+*Kollisionen Ball/Spielfeld
+*------------------------------------
+KOLBALL  LDX PX        Koordinaten
+         LDY PY        laden
+         LDA VX        Bewegung nach
+         BPL RECHTS    rechts -->
+         DEX           links!
+         JSR KOL       Der Ball ist
+         ORA XMASKE    zwei Punkte
+         STA XMASKE    breit, also
+         DEY           muessen auch
+         JSR KOL       zwei Punkte auf
+         ORA XMASKE    Kollision unter-
+         STA XMASKE    sucht werden.
+         JMP YTEST
+
+RECHTS   INX           Selbiges fuer
+         INX           Bewegung nach
+         JSR KOL       rechts
+         ORA XMASKE
+         STA XMASKE
+         DEY
+         JSR KOL
+         ORA XMASKE
+         STA XMASKE
+
+YTEST    LDX PX        Jetzt pruefen,
+         LDY PY        ob eine Kollisieon
+         LDA VY        in Y-Richtung
+         BMI OBEN      auftritt - zuert
+         INY           nach unten...
+         JSR KOL
+         ORA YMASKE
+         STA YMASKE
+         INX
+         JSR KOL
+         ORA YMASKE
+         STA YMASKE
+         JMP KOLEND
+
+OBEN     DEY           ...dann oben
+         DEY
+         JSR KOL
+         ORA YMASKE
+         STA YMASKE
+         INX
+         JSR KOL
+         ORA YMASKE
+         STA YMASKE
+
+KOLEND   LDA XMASKE    Falls Kollison
+         BPL KB1       stattfand, so
+         LDA VX        muss die Geschwindig-
+         EOR XMASKE    keit invertiert
+         STA VX        werden.
+         INC VX
+
+KB1      LDA YMASKE    jetzt Y-Geschw.
+         BPL KB2
+         LDA VY
+         EOR YMASKE
+         STA VY
+         INC VY
+KB2      RTS
+
+*------------------------------------
+*Kollisionen Ball/Schlaeger
+*------------------------------------
+KOLSCHL  LDA VY        nur bei Bewegung nach
+         BMI KSEND     unten interessant
+         LDY PY        Ball schon unter
+         CPY #193      Schlaeger?
+         BCC KS0       nein -->
+         LDA #$FF      sonst: Spielende
+         STA FLAG      einleiten.
+         JMP KSEND
+
+KS0      CPY #183      Ball genau auf
+         BCC KSEND     Hoehe des Schlaegers?
+         BNE KSEND     nein -->
+
+         SEC
+         LDA PX
+         SBC SCHLAGX   Wenn PX-SX=-1
+         CMP #$FF      dann Treffer!
+         BEQ TREFFER
+KS2      CMP #15       oder PX-SX<=15
+         BEQ TREFFER
+         BCS KSEND
+TREFFER  LDA #$FF      YMaske zur
+         STA YMASKE    Umkehr setzen
+KSEND    RTS
+
+*------------------------------------
+* Unterprogramm zur Feststellung
+* einer Kollsion mit dem Spielfeld
+*  <X>: zu ueberpruefende X-Koordinate
+*  <Y>:      --"--        Y-Koordinate
+* Rueckgabe:
+*  <A>: $FF wenn Treffer, sonst 0
+*------------------------------------
+KOL      LDA #0
+         STA QUELLE+1
+         TXA           Koordinaten einstweilen
+         PHA           retten
+         TYA
+         PHA
+         LSR           ;INT(Y/8)
+         LSR
+         LSR
+         STA QUELLE    merken
+         ASL           ;mal 4
+         ASL
+         CLC
+         ADC QUELLE    plus urspr. Wert
+         ASL           ;mal 2
+         STA QUELLE    mal 2
+         ASL QUELLE    ergibt zusammen
+         ROL QUELLE+1  mal 20
+         CLC           Anfangsadresse
+         LDA QUELLE    des Bildschim-
+         ADC #MAP:L    speichers dazu-
+         STA QUELLE    zaehlen - damit ist
+         LDA #MAP:H    die Anfangsadrees
+         ADC QUELLE+1  der Zeile gefunden
+         STA QUELLE+1
+         TXA           Nun Position des
+         LSR           ;Zeichens in der
+         LSR           ;Zeile ermitteln
+         LSR           ;geteilt durch 8
+         TAY
+         LDA (QUELLE),Y Zeichen laden
+         AND #$3F      Farbe maskieren
+         BEQ K1        ist Leerzeichen
+         LDX #$FF      Wert f. Maske
+         CMP #2        ist Stein?
+         BNE K2        nein!
+         LDA #0        sonst loeschen
+         STA (QUELLE),Y
+         DEC ANZAHL    Ein Stein weniger
+         JMP K2
+K1       LDX #0        Maske zwischen-
+K2       STX ZAEHL     speichern
+         PLA           Register wieder
+         TAY           herstellen
+         PLA
+         TAX
+         LDA ZAEHL     Maske in Akku
+         RTS
+
+*------------------------------------
+* Ball anzeigen
+*
+* <X>: X-Pos. Ball <Y>:Y-Pos. Ball
+*------------------------------------
+SETBALL  STX PX
+         CLC
+         LDA PY        alte Position
+         ADC #$20      loeschen
+         TAX
+         LDA #0
+         STA ADRPM+$500,X
+         STA ADRPM+$4FF,X
+         TYA
+         STA PY        Ball an neue
+         CLC           Position setzen
+         ADC #$20
+         TAX
+         LDA #$C0
+         STA ADRPM+$500,X
+         STA ADRPM+$4FF,X
+         CLC
+         LDA PX        X-Position
+         ADC #$30      berechnen
+         STA HPOSP0+1
+         RTS
+
+*------------------------------------
+* PM-Graphik einschalten
+*------------------------------------
+INITPM   LDA #0            PM-Bereich
+         LDX #0            loeschen
+LOESCH   STA ADRPM+$300,X  Missiles
+         STA ADRPM+$400,X  Player 1
+         STA ADRPM+$500,X  ...
+         STA ADRPM+$600,X
+         STA ADRPM+$700,X  Player 4
+         DEX
+         BNE LOESCH
+*
+         LDX #7
+         LDA #$FF          Schlaegerform
+SHPCOPY  STA ADRPM+$4D8,X  in PM-Speicher
+         DEX               kopieren
+         BPL SHPCOPY
+*
+         LDA #ADRPM:H      PM-Basisadresse
+         STA PMBASE        festlegen
+         LDA #$0C          Farbe Player 0
+         STA PCOLR0
+         STA PCOLR0+1
+         LDA #1            mittlere Breite
+         STA SIZEP0        waehlen
+         LDA #1            Prioritaet
+         STA GPRIOR
+         LDA #$3A          Player-DMA
+         STA SDMCTL        einschalten
+         LDA #2            PM-Darstellung
+         STA GRACTL        einschalten
+         LDA #72           Schlaeger in
+         STA SCHLAGX       die Mitte
+         RTS
+
+*------------------------------------
+* Daten fuer die Einzelzeilen
+*------------------------------------
+ZEILE0   DFB 65,65,65,65,65
+         DFB 65,65,65,65,65
+         DFB 65,65,65,65,65
+         DFB 65,65,65,65,65
+ZEILE1   DFB 65,0,0,0,0,0,0,0,0,0
+         DFB 0,0,0,0,0,0,0,0,0,65
+ZEILE2   DFB 65,0,66,0,66,0,66,0,66,0
+         DFB 66,0,66,0,66,0,66,0,0,65
+ZEILE3   DFB 65,0,0,66,0,66,0,66,0,66
+         DFB 0,66,0,66,0,66,0,66,0,65
+
+*------------------------------------
+*Tabelle zum Auffinden der Zeilen
+*------------------------------------
+ZTAB     DFW ZEILE0,ZEILE1
+         DFW ZEILE2,ZEILE3
+
+*------------------------------------
+* Beschreibt Aufbau des Spielfeldes
+*------------------------------------
+SPFELD   DFB 0,1,1,2,1,3,1,2,1,3,1,2
+         DFB 1,1,1,1,1,1,1,1,1,1,1,1
+
+*------------------------------------
+* Der Zeichensatz
+*------------------------------------
+ZSATZ    DFB $82,$44,$34,$08
+         DFB $34,$62,$42,$81
+         DFB $FF,$FF,$FF,$FF
+         DFB $FF,$FF,$FF,$FF
+         DFB $FF,$FF,$C3,$C3
+         DFB $C3,$C3,$FF,$FF
